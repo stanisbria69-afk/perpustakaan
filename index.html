@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PERPUSTAKAAN DAERAH MALAKA</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #F8FAFC;
+            --primary: #0F172A; 
+            --sidebar-bg: #1E293B; 
+            --accent: #EAB308; 
+            --accent-hover: #CA8A04; 
+            --card-bg: #FFFFFF;
+        }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main);
+            color: #334155;
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #F1F5F9; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+        .slims-card-box {
+            width: 324px;
+            height: 204px;
+            max-width: 324px;
+            max-height: 204px;
+            overflow: hidden;
+            box-sizing: border-box;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            position: relative;
+        }
+        .slims-card-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--accent), #FDE047);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .nav-link {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-link.active {
+            background-color: var(--accent);
+            color: var(--primary);
+            font-weight: 700;
+            box-shadow: 0 4px 14px rgba(234, 179, 8, 0.3);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <header class="bg-[#0F172A] text-white p-4 flex justify-between items-center md:hidden shadow-md">
+        <div class="flex items-center space-x-3">
+            <div class="bg-yellow-500/20 p-2 rounded-lg">
+                <i class="fas fa-layer-group text-yellow-400"></i>
+            </div>
+            <span class="font-bold tracking-tight text-sm">PERPUSDA MALAKA</span>
+        </div>
+        <button id="menu-toggle" class="text-slate-300 focus:outline-none text-xl p-1 hover:text-white">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
+
+    <div class="flex flex-1 flex-col md:flex-row relative">
+        
+        <aside id="sidebar" class="bg-[#1E293B] text-slate-300 w-full md:w-68 space-y-6 py-6 px-4 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out z-30 flex flex-col justify-between shadow-xl border-r border-slate-700/50">
+            <div class="space-y-6">
+                <div class="flex items-center space-x-3 px-2 border-b border-slate-700/60 pb-5">
+                    <div class="bg-yellow-500 text-slate-900 p-2.5 rounded-xl shadow-lg shadow-yellow-500/20">
+                        <i class="fas fa-book-open text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 id="web-title-side" class="font-bold text-white text-sm tracking-wide leading-tight">PERPUSDA MALAKA</h1>
+                        <p class="text-[11px] text-slate-400 font-medium">Kabupaten Malaka, NTT</p>
+                    </div>
+                </div>
+
+                <nav id="main-nav-links" class="space-y-1.5">
+                    <span class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Layanan Umum</span>
+                    
+                    <a href="#" onclick="switchActiveNav(this, 'informasi')" class="nav-link active flex items-center py-2.5 px-3.5 rounded-xl text-xs font-medium hover:bg-slate-700/50 hover:text-white">
+                        <i class="fas fa-info-circle mr-3 text-sm opacity-80"></i>Informasi Profil
+                    </a>
+                    <a href="#" onclick="switchActiveNav(this, 'kunjungan')" class="nav-link flex items-center py-2.5 px-3.5 rounded-xl text-xs font-medium hover:bg-slate-700/50 hover:text-white">
+                        <i class="fas fa-user-check mr-3 text-sm opacity-80"></i>Buku Kunjungan
+                    </a>
+                    <a href="#" onclick="switchActiveNav(this, 'registrasi')" class="nav-link flex items-center py-2.5 px-3.5 rounded-xl text-xs font-medium hover:bg-slate-700/50 hover:text-white">
+                        <i class="fas fa-id-card mr-3 text-sm opacity-80"></i>Registrasi Anggota
+                    </a>
+                    <a href="#" onclick="switchActiveNav(this, 'survei')" class="nav-link flex items-center py-2.5 px-3.5 rounded-xl text-xs font-medium hover:bg-slate-700/50 hover:text-white">
+                        <i class="fas fa-smile-beam mr-3 text-sm opacity-80"></i>Survei Layanan
+                    </a>
+                    <a href="#" onclick="switchActiveNav(this, 'login')" id="menu-login-btn" class="nav-link flex items-center py-2.5 px-3.5 rounded-xl text-xs font-medium bg-slate-900/40 text-yellow-400 hover:bg-slate-900/80 hover:text-white">
+                        <i class="fas fa-lock mr-3 text-sm opacity-80"></i>Sistem Control Admin
+                    </a>
+                    
+                    <div id="admin-menus" class="hidden border-t border-slate-700/50 pt-4 mt-4 space-y-1.5">
+                        <span class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Workspace Admin</span>
+                        
+                        <a href="#" onclick="switchActiveNav(this, 'admin-dashboard')" class="nav-link flex items-center py-2.5 px-3.5 rounded-xl text-xs font-medium hover:bg-slate-700/50 hover:text-white">
+                            <i class="fas fa-chart-pie mr-3 text-sm opacity-80"></i>Dashboard Analitik
+                        </a>
+                        <a href="#" onclick="switchActiveNav(this, 'daftar-anggota')" class="nav-link flex items-center py-2.5 px-3.5 rounded-xl text-xs font-medium hover:bg-slate-700/50 hover:text-white">
+                            <i class="fas fa-users mr-3 text-sm opacity-80"></i>Database Anggota
+                        </a>
+                        <a href="#" onclick="switchActiveNav(this, 'input-buku')" class="nav-link flex items-center py-2.5 px-3.5 rounded-xl text-xs font-medium hover:bg-slate-700/50 hover:text-white">
+                            <i class="fas fa-plus-circle mr-3 text-sm opacity-80"></i>Input Koleksi Baru
+                        </a>
+                        <a href="#" onclick="switchActiveNav(this, 'daftar-buku')" class="nav-link flex items-center py-2.5 px-3.5 rounded-xl text-xs font-medium hover:bg-slate-700/50 hover:text-white">
+                            <i class="fas fa-stream mr-3 text-sm opacity-80"></i>Katalog Koleksi
+                        </a>
+                        <a href="#" onclick="switchActiveNav(this, 'peminjaman')" class="nav-link flex items-center py-2.5 px-3.5 rounded-xl text-xs font-medium hover:bg-slate-700/50 hover:text-white">
+                            <i class="fas fa-folder-plus mr-3 text-sm opacity-80"></i>Sirkulasi Peminjaman
+                        </a>
+                        <a href="#" onclick="switchActiveNav(this, 'kelola-galeri')" class="nav-link flex items-center py-2.5 px-3.5 rounded-xl text-xs font-medium hover:bg-slate-700/50 hover:text-white">
+                            <i class="fas fa-images mr-3 text-sm opacity-80"></i>Kelola Galeri Foto
+                        </a>
+                        <a href="#" onclick="switchActiveNav(this, 'kustom-web')" class="nav-link flex items-center py-2.5 px-3.5 rounded-xl text-xs font-medium hover:bg-slate-700/50 hover:text-white">
+                            <i class="fas fa-sliders-h mr-3 text-sm opacity-80"></i>Kustom UI Web
+                        </a>
+                        <a href="#" onclick="logoutAdmin()" class="flex items-center py-2.5 px-3.5 rounded-xl text-xs font-medium bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition mt-4">
+                            <i class="fas fa-power-off mr-3 text-sm"></i>Keluar Kelola
+                        </a>
+                    </div>
+                </nav>
+            </div>
+            <div class="text-[10px] text-slate-500 text-center border-t border-slate-700/30 pt-4">v3.0.0-Advanced CRUD UI</div>
+        </aside>
+
+        <main class="flex-1 p-5 md:p-8 overflow-y-auto max-w-full">
+            
+            <section id="page-informasi" class="page-content space-y-6">
+                <div class="glass-card p-6 rounded-2xl shadow-sm border-l-4 border-yellow-500">
+                    <h2 id="welcome-heading" class="text-xl font-bold text-slate-800 mb-2">Profil Perpustakaan</h2>
+                    <p id="welcome-desc" class="text-slate-600 text-xs md:text-sm leading-relaxed">Selamat datang di Perpustakaan Daerah Kabupaten Malaka. Kami menyediakan layanan pembuatan kartu anggota secara instan, peminjaman buku digital/fisik, dan pendaftaran kunjungan mandiri.</p>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-bold text-slate-700 mb-3 uppercase tracking-wider"><i class="fas fa-camera-retro mr-2 text-yellow-500"></i>Dokumentasi & Galeri Perpustakaan</h3>
+                    <div id="public-gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-100">
+                        <div class="w-8 h-8 rounded-lg bg-yellow-50 flex items-center justify-center text-yellow-600 mb-3"><i class="fas fa-eye text-sm"></i></div>
+                        <h3 class="text-sm font-bold text-slate-800 mb-1.5">Visi Utama</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">Terwujudnya Masyarakat Malaka yang Cerdas, Berbudaya, dan Gemar Membaca Berbasis Literasi Modern.</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-100">
+                        <div class="w-8 h-8 rounded-lg bg-yellow-50 flex items-center justify-center text-yellow-600 mb-3"><i class="fas fa-bullseye text-sm"></i></div>
+                        <h3 class="text-sm font-bold text-slate-800 mb-1.5">Misi Utama</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">Meningkatkan kualitas sarana prasarana serta mengembangkan layanan literasi berbasis teknologi informasi modern di Rai Malaka.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="page-kunjungan" class="page-content hidden">
+                <div class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-md border border-slate-100">
+                    <h2 class="text-base font-bold text-slate-800 mb-4"><i class="fas fa-user-edit mr-2 text-yellow-500"></i>Buku Tamu Digital</h2>
+                    <form id="form-kunjungan" class="space-y-4 text-xs">
+                        <div>
+                            <label class="block text-slate-600 font-semibold mb-1">Nama Lengkap</label>
+                            <input type="text" id="v-nama" required class="w-full border border-slate-200 px-3 py-2 rounded-xl focus:outline-hidden focus:border-yellow-500 bg-slate-50/50">
+                        </div>
+                        <div>
+                            <label class="block text-slate-600 font-semibold mb-1">Instansi / Sekolah / Alamat</label>
+                            <input type="text" id="v-instansi" required class="w-full border border-slate-200 px-3 py-2 rounded-xl focus:outline-hidden focus:border-yellow-500 bg-slate-50/50">
+                        </div>
+                        <div>
+                            <label class="block text-slate-600 font-semibold mb-1">Tujuan Kunjungan</label>
+                            <select id="v-tujuan" class="w-full border border-slate-200 px-3 py-2 rounded-xl focus:outline-hidden focus:border-yellow-500 bg-slate-50/50">
+                                <option>Membaca Buku</option>
+                                <option>Meminjam Buku</option>
+                                <option>Mengembalikan Buku</option>
+                                <option>Akses Internet / Tugas</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-[#1E293B] text-yellow-400 py-2.5 rounded-xl font-bold hover:bg-[#0F172A] transition shadow-lg">Kirim Data Kunjungan</button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="page-registrasi" class="page-content hidden">
+                <div class="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 lg:col-span-6">
+                        <h2 class="text-sm font-bold text-slate-800 mb-3"><i class="fas fa-user-plus mr-2 text-yellow-500"></i>Formulir Registrasi Mandiri</h2>
+                        <form id="form-registrasi" class="space-y-3 text-xs">
+                            <div>
+                                <label class="block font-semibold text-slate-600">Nama Lengkap</label>
+                                <input type="text" id="reg-nama" required class="w-full border border-slate-200 px-3 py-2 rounded-lg bg-slate-50/50" placeholder="Yohanes Malaka">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-600">NIK (Nomor Induk Kependudukan)</label>
+                                <input type="text" id="reg-nik" required class="w-full border border-slate-200 px-3 py-2 rounded-lg bg-slate-50/50" placeholder="532101xxxxxxxxxx">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-600">Pekerjaan</label>
+                                <input type="text" id="reg-pekerjaan" required class="w-full border border-slate-200 px-3 py-2 rounded-lg bg-slate-50/50" placeholder="PNS / Pelajar / Swasta">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-600">Alamat KTP</label>
+                                <textarea id="reg-alamat" rows="2" required class="w-full border border-slate-200 px-3 py-2 rounded-lg bg-slate-50/50" placeholder="Alamat sesuai KTP"></textarea>
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-600">Nomor HP / WhatsApp</label>
+                                <input type="text" id="reg-hp" required class="w-full border border-slate-200 px-3 py-2 rounded-lg bg-slate-50/50" placeholder="0812xxxxxxxx">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-600">Email Aktif</label>
+                                <input type="email" id="reg-email" required class="w-full border border-slate-200 px-3 py-2 rounded-lg bg-slate-50/50" placeholder="name@example.com">
+                            </div>
+                            <button type="submit" class="w-full bg-[#1E293B] text-yellow-400 py-2.5 rounded-lg font-bold shadow-md hover:bg-[#0F172A] transition">
+                                <i class="fas fa-magic mr-1"></i> Proses & Generate Kartu
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="flex flex-col items-center space-y-4 lg:col-span-6 w-full">
+                        <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Output Kartu Digital SLiMS</h2>
+                        <div id="kartu-anggota-digital" class="slims-card-box rounded-xl shadow-xl border border-slate-200 p-3 flex flex-col justify-between text-slate-800">
+                            <div class="flex justify-between items-start border-b pb-1.5 border-slate-200">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-university text-lg text-slate-800"></i>
+                                    <div>
+                                        <h4 class="font-bold text-[9px] tracking-wide text-slate-900 uppercase leading-tight">KARTU ANGGOTA PERPUSTAKAAN</h4>
+                                        <p class="text-[7px] text-slate-500 font-medium leading-none">Perpustakaan Daerah Kab. Malaka</p>
+                                    </div>
+                                </div>
+                                <span class="text-[7px] bg-slate-900 text-white font-mono font-bold px-1.5 py-0.5 rounded">SLiMS</span>
+                            </div>
+                            <div class="flex items-center justify-between my-auto">
+                                <div class="space-y-1 text-[10px] max-w-[190px] leading-tight">
+                                    <div>
+                                        <span class="text-[6px] text-slate-400 uppercase font-bold block">Nama Anggota</span>
+                                        <span id="card-name" class="font-bold text-slate-800 block truncate">Yohanes Malaka</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-[6px] text-slate-400 uppercase font-bold block">Nomor ID / NIK</span>
+                                        <span id="card-nik" class="font-mono font-bold text-slate-600 block">-</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-[6px] text-slate-400 uppercase font-bold block">Kontak Ponsel</span>
+                                        <span id="card-hp" class="text-slate-600 block">-</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-center justify-center bg-slate-50 p-1 rounded border border-slate-100 mr-1 shadow-xs">
+                                    <div id="qrcode-container" class="w-14 h-14 flex items-center justify-center">
+                                        <i class="fas fa-qrcode text-2xl text-slate-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center text-[7px] text-slate-400 border-t pt-1.5 border-slate-100">
+                                <span>Masyarakat Cerdas, Malaka Jaya</span>
+                                <span class="font-mono font-bold text-yellow-600 tracking-wider">SEUMUR HIDUP</span>
+                            </div>
+                        </div>
+                        <div id="cetak-action-area" class="hidden w-full max-w-xs grid grid-cols-2 gap-2">
+                            <button onclick="unduhKartuPNG()" class="bg-emerald-600 text-white py-2 rounded-lg font-bold text-xs shadow-xs hover:bg-emerald-700 transition">
+                                <i class="fas fa-image mr-1"></i> Simpan PNG
+                            </button>
+                            <button onclick="unduhKartuPDF()" class="bg-rose-600 text-white py-2 rounded-lg font-bold text-xs shadow-xs hover:bg-rose-700 transition">
+                                <i class="fas fa-file-pdf mr-1"></i> Unduh PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="page-survei" class="page-content hidden">
+                <div class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-md border border-slate-100 text-center">
+                    <h2 class="text-base font-bold text-slate-800 mb-1">Survei Kepuasan Layanan</h2>
+                    <p class="text-xs text-slate-400 mb-4">Umpan balik Anda membantu kami berkembang</p>
+                    <form id="form-survei" class="space-y-4 text-left text-xs">
+                        <div>
+                            <label class="block text-slate-600 font-semibold mb-1">Nama</label>
+                            <input type="text" id="s-nama" required class="w-full border border-slate-200 px-3 py-2 rounded-lg bg-slate-50/50">
+                        </div>
+                        <div>
+                            <label class="block text-slate-600 font-semibold mb-2">Tingkat Kepuasan (1 - 10)</label>
+                            <div class="flex justify-between gap-1 overflow-x-auto py-1">
+                                <script>
+                                    for(let i=1; i<=10; i++) {
+                                        document.write(`
+                                            <label class="flex flex-col items-center cursor-pointer">
+                                                <input type="radio" name="rating" value="${i}" class="sr-only peer" ${i===10?'checked':''}>
+                                                <span class="w-7 h-7 rounded-lg border border-slate-200 flex items-center justify-center text-[11px] font-bold peer-checked:bg-yellow-500 peer-checked:text-slate-900 transition">${i}</span>
+                                            </label>
+                                        `);
+                                    }
+                                </script>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-slate-600 font-semibold mb-1">Saran / Masukan</label>
+                            <textarea id="s-saran" rows="3" class="w-full border border-slate-200 px-3 py-2 rounded-lg bg-slate-50/50"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-[#1E293B] text-yellow-400 py-2.5 rounded-lg font-bold hover:bg-[#0F172A] transition">Kirim Polling</button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="page-login" class="page-content hidden">
+                <div class="max-w-xs mx-auto bg-white p-6 rounded-2xl shadow-md border border-slate-100">
+                    <h2 class="text-base font-bold text-slate-800 mb-4 text-center"><i class="fas fa-shield-alt mr-2 text-yellow-500"></i>Otentikasi Kunci</h2>
+                    <form id="form-login" class="space-y-3 text-xs">
+                        <div>
+                            <label class="block font-semibold text-slate-600">Username</label>
+                            <input type="text" id="log-user" value="admin" required class="w-full border border-slate-200 px-3 py-2 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-600">Password</label>
+                            <input type="password" id="log-pass" value="admin123" required class="w-full border border-slate-200 px-3 py-2 rounded-lg">
+                        </div>
+                        <button type="submit" class="w-full bg-[#1E293B] text-yellow-400 py-2 rounded-lg font-bold hover:bg-[#0F172A] transition mt-2">Masuk Ruang Kerja</button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="page-admin-dashboard" class="page-content hidden space-y-5">
+                <div id="dashboard-capture-zone" class="p-4 bg-slate-50 rounded-2xl border border-slate-200/60 space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800 uppercase tracking-wide">Dashboard Analisis Intern</h2>
+                            <p class="text-[11px] text-slate-400 font-medium">Sistem Pemantauan Data Terpadu</p>
+                        </div>
+                        <button onclick="cetakLaporanScreenshot()" class="bg-[#1E293B] hover:bg-[#0F172A] text-yellow-400 px-4 py-2 rounded-xl text-xs font-bold shadow-md transition">
+                            <i class="fas fa-camera mr-2"></i>Cetak Laporan Dashboard (PDF)
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-2xs flex justify-between items-center">
+                            <div><p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Total Kunjungan</p><h3 class="text-xl font-bold text-slate-800" id="stat-kunjungan">128</h3></div>
+                            <div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500"><i class="fas fa-users text-sm"></i></div>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-2xs flex justify-between items-center">
+                            <div><p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Koleksi Buku</p><h3 class="text-xl font-bold text-slate-800" id="stat-buku">242</h3></div>
+                            <div class="w-9 h-9 rounded-lg bg-yellow-50 flex items-center justify-center text-yellow-600"><i class="fas fa-book text-sm"></i></div>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-2xs flex justify-between items-center">
+                            <div><p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Sedang Dipinjam</p><h3 class="text-xl font-bold text-slate-800" id="stat-pinjam">0</h3></div>
+                            <div class="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500"><i class="fas fa-exchange-alt text-sm"></i></div>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-2xs flex justify-between items-center">
+                            <div><p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Foto Terdistribusi</p><h3 class="text-xl font-bold text-slate-800" id="stat-foto">2</h3></div>
+                            <div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-800"><i class="fas fa-images text-sm"></i></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border border-slate-100">
+                        <h4 class="font-bold text-xs mb-3 text-slate-500 uppercase tracking-wider"><i class="fas fa-images mr-1"></i> Monitor Visual Gedung & Kegiatan Perpustakaan</h4>
+                        <div id="dashboard-photo-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div class="bg-white p-4 rounded-xl border border-slate-100"><h4 class="font-bold text-xs mb-3 text-slate-500">Tren Kunjungan Bulanan</h4><canvas id="chartTren"></canvas></div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-100"><h4 class="font-bold text-xs mb-3 text-slate-500">Grafik Indeks Kepuasan</h4><canvas id="chartSurvei"></canvas></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="page-daftar-anggota" class="page-content hidden space-y-4">
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                        <h2 class="text-base font-bold text-slate-800"><i class="fas fa-users-cog mr-2 text-yellow-500"></i>Database Management Anggota</h2>
+                        <button onclick="bukaModalAnggota()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
+                            <i class="fas fa-plus mr-1"></i> Tambah Anggota Manual
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse text-left text-xs text-slate-600">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+                                    <th class="p-3">NIK / ID Anggota</th><th class="p-3">Nama Lengkap</th><th class="p-3">Profesi</th><th class="p-3">No HP / WA</th><th class="p-3 text-center">Aksi Operasi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-anggota-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="modal-anggota" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+                    <div class="bg-white p-5 rounded-2xl shadow-xl w-full max-w-sm space-y-4 border border-slate-100">
+                        <h3 id="modal-title" class="text-sm font-bold text-slate-800">Manajemen Anggota</h3>
+                        <form id="form-modal-anggota" class="space-y-3 text-xs">
+                            <input type="hidden" id="edit-index">
+                            <div>
+                                <label class="block font-semibold mb-1 text-slate-600">NIK (ID Anggota)</label>
+                                <input type="text" id="m-nik" required class="w-full border border-slate-200 px-3 py-2 rounded-lg bg-slate-50">
+                            </div>
+                            <div>
+                                <label class="block font-semibold mb-1 text-slate-600">Nama Lengkap</label>
+                                <input type="text" id="m-nama" required class="w-full border border-slate-200 px-3 py-2 rounded-lg bg-slate-50">
+                            </div>
+                            <div>
+                                <label class="block font-semibold mb-1 text-slate-600">Pekerjaan</label>
+                                <input type="text" id="m-pekerjaan" required class="w-full border border-slate-200 px-3 py-2 rounded-lg bg-slate-50">
+                            </div>
+                            <div>
+                                <label class="block font-semibold mb-1 text-slate-600">No HP / WA</label>
+                                <input type="text" id="m-hp" required class="w-full border border-slate-200 px-3 py-2 rounded-lg bg-slate-50">
+                            </div>
+                            <div class="flex justify-end space-x-2 pt-2">
+                                <button type="button" onclick="tutupModalAnggota()" class="bg-slate-100 text-slate-500 px-3 py-1.5 rounded-lg font-bold">Batal</button>
+                                <button type="submit" class="bg-[#1E293B] text-yellow-400 px-4 py-1.5 rounded-lg font-bold hover:bg-[#0F172A]">Simpan Data</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <section id="page-input-buku" class="page-content hidden">
+                <div class="bg-white p-6 rounded-2xl shadow-md max-w-lg mx-auto border border-slate-100">
+                    <h2 class="text-base font-bold text-slate-800 mb-4"><i class="fas fa-book-medical mr-2 text-yellow-500"></i>Koleksi Buku Baru</h2>
+                    <form id="form-buku" class="space-y-4 text-xs">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="sm:col-span-2">
+                                <label class="block font-semibold text-slate-600 mb-1">Judul Buku</label>
+                                <input type="text" id="b-judul" required class="w-full border border-slate-200 px-3 py-2 rounded-lg focus:outline-hidden focus:border-yellow-500 bg-slate-50/50">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-600 mb-1">Penulis / Pengarang</label>
+                                <input type="text" id="b-penulis" required class="w-full border border-slate-200 px-3 py-2 rounded-lg focus:outline-hidden focus:border-yellow-500 bg-slate-50/50">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-600 mb-1">Penerbit</label>
+                                <input type="text" id="b-penerbit" required class="w-full border border-slate-200 px-3 py-2 rounded-lg focus:outline-hidden focus:border-yellow-500 bg-slate-50/50">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-600 mb-1">Tempat Terbit</label>
+                                <input type="text" id="b-tempat" required class="w-full border border-slate-200 px-3 py-2 rounded-lg focus:outline-hidden focus:border-yellow-500 bg-slate-50/50">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-600 mb-1">Tahun Terbit</label>
+                                <input type="number" id="b-tahun" required class="w-full border border-slate-200 px-3 py-2 rounded-lg focus:outline-hidden focus:border-yellow-500 bg-slate-50/50">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block font-semibold text-slate-600 mb-1">Jumlah Koleksi (Stok Unit)</label>
+                                <input type="number" id="b-jumlah" required class="w-full border border-slate-200 px-3 py-2 rounded-lg focus:outline-hidden focus:border-yellow-500 bg-slate-50/50">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-[#1E293B] text-yellow-400 py-2.5 rounded-lg font-bold hover:bg-[#0F172A] transition shadow-md">Simpan Koleksi Buku</button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="page-daftar-buku" class="page-content hidden">
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs overflow-x-auto">
+                    <h2 class="text-base font-bold text-slate-800 mb-3"><i class="fas fa-book mr-2 text-yellow-500"></i>Daftar Katalog Buku</h2>
+                    <table class="w-full border-collapse text-left text-xs text-slate-600">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+                                <th class="p-3">Judul Koleksi</th>
+                                <th class="p-3">Nama Pengarang</th>
+                                <th class="p-3">Penerbit</th>
+                                <th class="p-3">Tempat & Tahun</th>
+                                <th class="p-3">Stok Unit</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-buku-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="page-peminjaman" class="page-content hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-100">
+                        <h2 class="text-sm font-bold text-slate-800 mb-4"><i class="fas fa-arrow-up mr-2 text-yellow-500"></i>Sirkulasi Out (Peminjaman Baru)</h2>
+                        <form id="form-peminjaman" class="space-y-4 text-xs">
+                            <div>
+                                <label class="block font-semibold text-slate-600 mb-1">Pilih Anggota</label>
+                                <select id="p-anggota-select" required class="w-full border border-slate-200 px-3 py-2 rounded-lg bg-slate-50/50"></select>
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-600 mb-1">Pilih Koleksi Buku</label>
+                                <select id="p-buku-select" required class="w-full border border-slate-200 px-3 py-2 rounded-lg bg-slate-50/50"></select>
+                            </div>
+                            <button type="submit" class="w-full bg-[#1E293B] text-yellow-400 py-2 rounded-lg font-bold hover:bg-[#0F172A] transition">Proses Transaksi Pinjam</button>
+                        </form>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-100">
+                        <h2 class="text-sm font-bold text-slate-800 mb-3"><i class="fas fa-arrow-down mr-2 text-emerald-500"></i>Pengembalian Berkas Buku</h2>
+                        <div class="space-y-3 text-xs">
+                            <div>
+                                <label class="block font-semibold text-slate-600 mb-1">Masukkan NIK Anggota Kembali</label>
+                                <div class="flex space-x-2">
+                                    <input type="text" id="k-nik" class="w-full border border-slate-200 px-3 py-2 rounded-lg" placeholder="Input NIK Anggota...">
+                                    <button type="button" onclick="verifikasiPengembalian()" class="bg-[#1E293B] text-yellow-400 px-4 rounded-lg font-bold hover:bg-slate-900 transition">Proses</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs">
+                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Log Sirkulasi Buku Sedang Dipinjam</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse text-left text-xs text-slate-600">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+                                    <th class="p-3">Nama Anggota</th><th class="p-3">Judul Buku</th><th class="p-3">Tanggal Pinjam</th><th class="p-3 text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-sirkulasi-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="page-kelola-galeri" class="page-content hidden space-y-4">
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                        <div>
+                            <h2 class="text-base font-bold text-slate-800"><i class="fas fa-images mr-2 text-yellow-500"></i>Manajemen Galeri Foto Perpustakaan</h2>
+                            <p class="text-xs text-slate-400">Tambah, Edit, Hapus dokumentasi foto internal</p>
+                        </div>
+                        <button onclick="bukaModalGaleri()" class="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
+                            <i class="fas fa-plus mr-1"></i> Tambah Foto Baru
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse text-left text-xs text-slate-600">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+                                    <th class="p-3">Pratinjau</th><th class="p-3">Judul / Keterangan</th><th class="p-3">Kategori</th><th class="p-3 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-galeri-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="modal-galeri" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+                    <div class="bg-white p-5 rounded-2xl shadow-xl w-full max-w-md space-y-4 border border-slate-100">
+                        <h3 id="modal-galeri-title" class="text-sm font-bold text-slate-800">Tambah Gambar</h3>
+                        <form id="form-modal-galeri" class="space-y-3 text-xs">
+                            <input type="hidden" id="edit-galeri-index">
+                            <div>
+                                <label class="block font-semibold mb-1 text-slate-600">URL Foto Perpustakaan</label>
+                                <input type="text" id="g-url" required class="w-full border border-slate-200 px-3 py-2 rounded-lg bg-slate-50" placeholder="https://images.unsplash.com/photo-...">
+                            </div>
+                            <div>
+                                <label class="block font-semibold mb-1 text-slate-600">Judul / Keterangan Foto</label>
+                                <input type="text" id="g-title" required class="w-full border border-slate-200 px-3 py-2 rounded-lg bg-slate-50" placeholder="Ruang Baca Utama">
+                            </div>
+                            <div>
+                                <label class="block font-semibold mb-1 text-slate-600">Kategori</label>
+                                <select id="g-kategori" class="w-full border border-slate-200 px-3 py-2 rounded-lg bg-slate-50">
+                                    <option>Fasilitas Gedung</option>
+                                    <option>Kunjungan Kerja</option>
+                                    <option>Kegiatan Literasi</option>
+                                </select>
+                            </div>
+                            <div class="flex justify-end space-x-2 pt-2">
+                                <button type="button" onclick="tutupModalGaleri()" class="bg-slate-100 text-slate-500 px-3 py-1.5 rounded-lg font-bold">Batal</button>
+                                <button type="submit" class="bg-[#1E293B] text-yellow-400 px-4 py-1.5 rounded-lg font-bold hover:bg-[#0F172A]">Simpan Parameter Gambar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <section id="page-kustom-web" class="page-content hidden">
+                <div class="bg-white p-5 rounded-2xl shadow-xs max-w-md mx-auto border border-slate-100 space-y-4">
+                    <h2 class="text-base font-bold text-slate-800 mb-2"><i class="fas fa-sliders-h mr-2 text-yellow-500"></i>Kustomisasi Identitas Visual</h2>
+                    <form id="form-kustom-web" class="space-y-3 text-xs">
+                        <div>
+                            <label class="block font-semibold mb-1">Nama Lembaga Daerah</label>
+                            <input type="text" id="cfg-title" class="w-full border border-slate-200 px-3 py-2 rounded-lg" value="PERPUSTAKAAN DAERAH MALAKA">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Heading Sambutan</label>
+                            <input type="text" id="cfg-welcome" class="w-full border border-slate-200 px-3 py-2 rounded-lg" value="Profil Perpustakaan">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Deskripsi Utama Profil</label>
+                            <textarea id="cfg-desc" rows="3" class="w-full border border-slate-200 px-3 py-2 rounded-lg">Selamat datang di Perpustakaan Daerah Kabupaten Malaka. Kami menyediakan layanan pembuatan kartu anggota secara instan, peminjaman buku digital/fisik, dan pendaftaran kunjungan mandiri.</textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-[#1E293B] text-yellow-400 py-2.5 rounded-lg font-bold hover:bg-[#0F172A] transition">Update Tampilan Web</button>
+                    </form>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <footer class="bg-slate-900 text-slate-500 text-center py-3.5 text-[11px] font-medium border-t border-slate-800 mt-auto">
+        <p>&copy; 2026 Perpustakaan Daerah Kabupaten Malaka. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // INTEGRATED STATE MANAGEMENT USING LOCALSTORAGE OR INITIAL DEFAULTS
+        let dataAnggota = JSON.parse(localStorage.getItem('perpus_anggota')) || [
+            { nik: "5321010023910002", nama: "Yohanes Malaka", pekerjaan: "Swasta", hp: "081234567890" },
+            { nik: "5321015612890001", nama: "Maria Bria", pekerjaan: "Pelajar", hp: "082199887766" }
+        ];
+
+        let dataBuku = JSON.parse(localStorage.getItem('perpus_buku')) || [
+            { judul: "Laskar Pelangi", penulis: "Andrea Hirata", penerbit: "Bentang Pustaka", tempat: "Yogyakarta", tahun: "2005", jumlah: 5 },
+            { judul: "Bumi Manusia", penulis: "Pramoedya Ananta Toer", penerbit: "Lentera Dipantara", tempat: "Jakarta", tahun: "2005", jumlah: 3 }
+        ];
+
+        let dataGaleri = JSON.parse(localStorage.getItem('perpus_galeri')) || [
+            { url: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=600", title: "Ruang Baca Buku Referensi Utama", kategori: "Fasilitas Gedung" },
+            { url: "https://images.unsplash.com/photo-1568667256549-094345857637?q=80&w=600", title: "Katalog Rak Koleksi Digital Modern", kategori: "Fasilitas Gedung" }
+        ];
+
+        let dataSirkulasi = JSON.parse(localStorage.getItem('perpus_sirkulasi')) || [];
+
+        // SYNC HELPER FUNCTION
+        function syncStorage() {
+            localStorage.setItem('perpus_anggota', JSON.stringify(dataAnggota));
+            localStorage.setItem('perpus_buku', JSON.stringify(dataBuku));
+            localStorage.setItem('perpus_galeri', JSON.stringify(dataGaleri));
+            localStorage.setItem('perpus_sirkulasi', JSON.stringify(dataSirkulasi));
+            updateDashboardCounters();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const toggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            if(toggle && sidebar) {
+                toggle.addEventListener('click', () => sidebar.classList.toggle('-translate-x-full'));
+            }
+            initCharts();
+            renderTabelAnggota();
+            renderTabelBuku();
+            renderGaleriFoto();
+            populateSirkulasiSelects();
+            renderTabelSirkulasi();
+            updateDashboardCounters();
+        });
+
+        function switchActiveNav(element, pageId) {
+            document.querySelectorAll('#main-nav-links a').forEach(link => link.classList.remove('active'));
+            element.classList.add('active');
+            showPage(pageId);
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+            const activePage = document.getElementById(`page-${pageId}`);
+            if(activePage) activePage.classList.remove('hidden');
+            const sidebar = document.getElementById('sidebar');
+            if(sidebar && window.innerWidth < 768) sidebar.classList.add('-translate-x-full');
+        }
+
+        function updateDashboardCounters() {
+            document.getElementById('stat-anggota')?.innerText || (document.getElementById('stat-kunjungan').innerText = 128 + dataSirkulasi.length);
+            document.getElementById('stat-buku').innerText = dataBuku.reduce((acc, curr) => acc + parseInt(curr.jumlah), 0);
+            document.getElementById('stat-pinjam').innerText = dataSirkulasi.filter(s => s.status === 'Dipinjam').length;
+            document.getElementById('stat-foto').innerText = dataGaleri.length;
+        }
+
+        // --- SECTION CRUD ANGGOTA ---
+        function renderTabelAnggota() {
+            const tbody = document.getElementById('table-anggota-body');
+            tbody.innerHTML = '';
+            dataAnggota.forEach((agt, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-100 hover:bg-slate-50 transition text-xs";
+                tr.innerHTML = `
+                    <td class="p-3 font-mono text-slate-500">${agt.nik}</td>
+                    <td class="p-3 font-bold text-slate-800">${agt.nama}</td>
+                    <td class="p-3 text-slate-500">${agt.pekerjaan}</td>
+                    <td class="p-3 text-slate-500">${agt.hp}</td>
+                    <td class="p-3 text-center space-x-1.5 flex justify-center">
+                        <button onclick="editAnggota(${index})" class="bg-amber-500 hover:bg-amber-600 text-white px-2.5 py-1 rounded-md text-[10px] font-bold"><i class="fas fa-edit"></i></button>
+                        <button onclick="hapusAnggota(${index})" class="bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-1 rounded-md text-[10px] font-bold"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            populateSirkulasiSelects();
+        }
+
+        function bukaModalAnggota() {
+            document.getElementById('form-modal-anggota').reset();
+            document.getElementById('edit-index').value = '';
+            document.getElementById('modal-title').innerText = "Tambah Anggota Baru";
+            document.getElementById('modal-anggota').classList.remove('hidden');
+        }
+        function tutupModalAnggota() { document.getElementById('modal-anggota').classList.add('hidden'); }
+
+        document.getElementById('form-modal-anggota').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const idx = document.getElementById('edit-index').value;
+            const item = {
+                nik: document.getElementById('m-nik').value,
+                nama: document.getElementById('m-nama').value,
+                pekerjaan: document.getElementById('m-pekerjaan').value,
+                hp: document.getElementById('m-hp').value
+            };
+            if(idx === '') dataAnggota.push(item);
+            else dataAnggota[idx] = item;
+            tutupModalAnggota();
+            syncStorage();
+            renderTabelAnggota();
+        });
+
+        function editAnggota(index) {
+            const agt = dataAnggota[index];
+            document.getElementById('edit-index').value = index;
+            document.getElementById('m-nik').value = agt.nik;
+            document.getElementById('m-nama').value = agt.nama;
+            document.getElementById('m-pekerjaan').value = agt.pekerjaan;
+            document.getElementById('m-hp').value = agt.hp;
+            document.getElementById('modal-title').innerText = "Edit Parameter Anggota";
+            document.getElementById('modal-anggota').classList.remove('hidden');
+        }
+        function hapusAnggota(index) {
+            if(confirm('Hapus anggota ini?')) { dataAnggota.splice(index, 1); syncStorage(); renderTabelAnggota(); }
+        }
+
+        // --- SECTION CRUD BUKU ---
+        function renderTabelBuku() {
+            const tbody = document.getElementById('table-buku-body');
+            tbody.innerHTML = '';
+            dataBuku.forEach(bk => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-100 text-xs";
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-slate-700">${bk.judul}</td>
+                    <td class="p-3">${bk.penulis}</td>
+                    <td class="p-3">${bk.penerbit}</td>
+                    <td class="p-3">${bk.tempat}, ${bk.tahun}</td>
+                    <td class="p-3 font-bold text-slate-800">${bk.jumlah} Unit</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            populateSirkulasiSelects();
+        }
+
+        document.getElementById('form-buku').addEventListener('submit', function(e) {
+            e.preventDefault();
+            dataBuku.push({
+                judul: document.getElementById('b-judul').value,
+                penulis: document.getElementById('b-penulis').value,
+                penerbit: document.getElementById('b-penerbit').value,
+                tempat: document.getElementById('b-tempat').value,
+                tahun: document.getElementById('b-tahun').value,
+                jumlah: parseInt(document.getElementById('b-jumlah').value)
+            });
+            alert('Koleksi Buku Baru Berhasil Disimpan!');
+            this.reset();
+            syncStorage();
+            renderTabelBuku();
+        });
+
+        // --- SECTION TRANSAKSI SIRKULASI ACTIVE SYSTEM ---
+        function populateSirkulasiSelects() {
+            const aSel = document.getElementById('p-anggota-select');
+            const bSel = document.getElementById('p-buku-select');
+            if(!aSel || !bSel) return;
+            
+            aSel.innerHTML = '';
+            dataAnggota.forEach(a => aSel.innerHTML += `<option value="${a.nik}">${a.nama} (${a.nik})</option>`);
+            
+            bSel.innerHTML = '';
+            dataBuku.forEach((b, i) => {
+                if(b.jumlah > 0) bSel.innerHTML += `<option value="${i}">${b.judul} (Tersedia: ${b.jumlah})</option>`;
+            });
+        }
+
+        document.getElementById('form-peminjaman').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const aNik = document.getElementById('p-anggota-select').value;
+            const bIndex = document.getElementById('p-buku-select').value;
+            
+            const anggota = dataAnggota.find(a => a.nik === aNik);
+            const buku = dataBuku[bIndex];
+
+            if(buku.jumlah > 0) {
+                buku.jumlah -= 1;
+                dataSirkulasi.push({
+                    nik: aNik,
+                    nama: anggota.nama,
+                    judul: buku.judul,
+                    bukuIndex: bIndex,
+                    tanggal: new Date().toLocaleDateString('id-ID'),
+                    status: 'Dipinjam'
+                });
+                syncStorage();
+                renderTabelBuku();
+                renderTabelSirkulasi();
+                alert('Transaksi peminjaman berhasil diproses!');
+            }
+        });
+
+        function renderTabelSirkulasi() {
+            const tbody = document.getElementById('table-sirkulasi-body');
+            tbody.innerHTML = '';
+            dataSirkulasi.forEach(s => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-100 text-xs";
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold">${s.nama}</td>
+                    <td class="p-3">${s.judul}</td>
+                    <td class="p-3 font-mono">${s.tanggal}</td>
+                    <td class="p-3 text-center"><span class="px-2 py-0.5 font-bold rounded-md bg-amber-100 text-amber-700">${s.status}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function verifikasiPengembalian() {
+            const nikInput = document.getElementById('k-nik').value;
+            const index = dataSirkulasi.findIndex(s => s.nik === nikInput && s.status === 'Dipinjam');
+            
+            if(index !== -1) {
+                const log = dataSirkulasi[index];
+                dataBuku[log.bukuIndex].jumlah += 1;
+                dataSirkulasi.splice(index, 1); // Hapus pinjaman aktif atau set 'Kembali'
+                syncStorage();
+                renderTabelBuku();
+                renderTabelSirkulasi();
+                alert('Validasi Berhasil! Berkas Buku Telah Masuk Kembali Ke Stok.');
+                document.getElementById('k-nik').value = '';
+            } else {
+                alert('Tidak ada rekaman peminjaman aktif untuk NIK tersebut!');
+            }
+        }
+
+        // --- FITUR REQUEST UTAMA: MANAGEMENT CRUD & DISPLAY FOTO PERPUSTAKAAN ---
+        function renderGaleriFoto() {
+            const pubGrid = document.getElementById('public-gallery-grid');
+            const dashGrid = document.getElementById('dashboard-photo-container');
+            const tableBody = document.getElementById('table-galeri-body');
+            
+            pubGrid.innerHTML = '';
+            dashGrid.innerHTML = '';
+            tableBody.innerHTML = '';
+
+            dataGaleri.forEach((g, i) => {
+                // Public Grid Display (Profil)
+                pubGrid.innerHTML += `
+                    <div class="bg-white rounded-xl overflow-hidden border border-slate-100 shadow-xs">
+                        <img src="${g.url}" class="w-full h-36 object-cover" alt="Foto">
+                        <div class="p-3"><span class="text-[9px] bg-yellow-500/10 text-yellow-700 font-bold px-1.5 py-0.5 rounded">${g.kategori}</span>
+                        <h4 class="text-xs font-bold mt-1.5 text-slate-800">${g.title}</h4></div>
+                    </div>`;
+
+                // Dashboard Slide Card Preview
+                dashGrid.innerHTML += `
+                    <div class="relative bg-slate-900 rounded-lg overflow-hidden group border border-slate-200">
+                        <img src="${g.url}" class="w-full h-24 object-cover opacity-90" alt="Dash Pic">
+                        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-950 p-1.5 text-[10px] text-white">
+                            <p class="font-bold truncate">${g.title}</p>
+                        </div>
+                    </div>`;
+
+                // Internal Management Table Body
+                tableBody.innerHTML += `
+                    <tr class="border-b border-slate-100 text-xs">
+                        <td class="p-2"><img src="${g.url}" class="w-12 h-10 object-cover rounded border"></td>
+                        <td class="p-2 font-semibold text-slate-700">${g.title}</td>
+                        <td class="p-2 text-slate-500">${g.kategori}</td>
+                        <td class="p-2 text-center space-x-1 flex justify-center items-center h-12">
+                            <button onclick="editGaleri(${i})" class="bg-amber-500 text-white px-2 py-0.5 rounded text-[10px]"><i class="fas fa-edit"></i></button>
+                            <button onclick="hapusGaleri(${i})" class="bg-rose-600 text-white px-2 py-0.5 rounded text-[10px]"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function bukaModalGaleri() {
+            document.getElementById('form-modal-galeri').reset();
+            document.getElementById('edit-galeri-index').value = '';
+            document.getElementById('modal-galeri-title').innerText = "Unggah Dokumentasi Foto Baru";
+            document.getElementById('modal-galeri').classList.remove('hidden');
+        }
+        function tutupModalGaleri() { document.getElementById('modal-galeri').classList.add('hidden'); }
+
+        document.getElementById('form-modal-galeri').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const idx = document.getElementById('edit-galeri-index').value;
+            const obj = {
+                url: document.getElementById('g-url').value,
+                title: document.getElementById('g-title').value,
+                kategori: document.getElementById('g-kategori').value
+            };
+            if(idx === '') dataGaleri.push(obj);
+            else dataGaleri[idx] = obj;
+            tutupModalGaleri();
+            syncStorage();
+            renderGaleriFoto();
+        });
+
+        function editGaleri(idx) {
+            const g = dataGaleri[idx];
+            document.getElementById('edit-galeri-index').value = idx;
+            document.getElementById('g-url').value = g.url;
+            document.getElementById('g-title').value = g.title;
+            document.getElementById('g-kategori').value = g.kategori;
+            document.getElementById('modal-galeri-title').innerText = "Edit Parameter Gambar";
+            document.getElementById('modal-galeri').classList.remove('hidden');
+        }
+
+        function hapusGaleri(idx) {
+            if(confirm('Keluarkan gambar ini dari etalase visual?')) { dataGaleri.splice(idx, 1); syncStorage(); renderGaleriFoto(); }
+        }
+
+        // --- PRINT SCREENSHOT LAPORAN DASHBOARD LENGKAP ---
+        function cetakLaporanScreenshot() {
+            const element = document.getElementById('dashboard-capture-zone');
+            alert('Mengompilasi Laporan Visual... Mohon tunggu');
+            html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgWidth = 190; 
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(12);
+                pdf.text("LAPORAN BULANAN PEMANTAUAN VISUAL INTERNAL", 15, 14);
+                pdf.setFontSize(8);
+                pdf.setFont("helvetica", "normal");
+                pdf.text(`Diekstrak otomatis pada sistem: ${new Date().toLocaleString('id-ID')}`, 15, 18);
+                
+                pdf.addImage(imgData, 'PNG', 10, 24, imgWidth, imgHeight);
+                pdf.save(`Laporan-Monev-Perpusda-${new Date().getFullYear()}.pdf`);
+            });
+        }
+
+        // --- LAYANAN REGISTRASI ONLINE ---
+        document.getElementById('form-registrasi').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nama = document.getElementById('reg-nama').value;
+            const nik = document.getElementById('reg-nik').value;
+            const hp = document.getElementById('reg-hp').value;
+
+            document.getElementById('card-name').innerText = nama;
+            document.getElementById('card-nik').innerText = nik;
+            document.getElementById('card-hp').innerText = hp;
+            
+            document.getElementById('qrcode-container').innerHTML = '';
+            new QRCode(document.getElementById('qrcode-container'), { text: nik, width: 56, height: 56 });
+            document.getElementById('cetak-action-area').classList.remove('hidden');
+            
+            dataAnggota.push({ nik: nik, nama: nama, pekerjaan: document.getElementById('reg-pekerjaan').value, hp: hp });
+            syncStorage();
+            renderTabelAnggota();
+        });
+
+        function unduhKartuPNG() {
+            html2canvas(document.getElementById('kartu-anggota-digital'), { scale: 3 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Kartu-SLiMS-${document.getElementById('card-nik').innerText}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        function unduhKartuPDF() {
+            html2canvas(document.getElementById('kartu-anggota-digital'), { scale: 3 }).then(canvas => {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('l', 'mm', [85.6, 54]);
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 85.6, 54);
+                pdf.save(`Kartu-SLiMS-${document.getElementById('card-nik').innerText}.pdf`);
+            });
+        }
+
+        document.getElementById('form-kustom-web').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('web-title-side').innerText = document.getElementById('cfg-title').value;
+            document.getElementById('welcome-heading').innerText = document.getElementById('cfg-welcome').value;
+            document.getElementById('welcome-desc').innerText = document.getElementById('cfg-desc').value;
+            alert('Konfigurasi UI berhasil diperbarui!');
+        });
+
+        document.getElementById('form-login').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if(document.getElementById('log-user').value === 'admin' && document.getElementById('log-pass').value === 'admin123') {
+                document.getElementById('admin-menus').classList.remove('hidden');
+                document.getElementById('menu-login-btn').classList.add('hidden');
+                showPage('admin-dashboard');
+            } else { alert('Otentikasi Gagal!'); }
+        });
+
+        function logoutAdmin() {
+            document.getElementById('admin-menus').classList.add('hidden');
+            document.getElementById('menu-login-btn').classList.remove('hidden');
+            showPage('informasi');
+        }
+
+        function initCharts() {
+            new Chart(document.getElementById('chartTren'), {
+                type: 'line',
+                data: { 
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'], 
+                    datasets: [{ label: 'Kunjungan', data: [65, 78, 90, 105, 115, 128], borderColor: '#EAB308', tension: 0.35, fill: false }] 
+                },
+                options: { plugins: { legend: { display: false } } }
+            });
+            new Chart(document.getElementById('chartSurvei'), {
+                type: 'bar',
+                data: { 
+                    labels: ['Puas', 'Cukup', 'Kurang'], 
+                    datasets: [{ label: 'Indeks', data: [85, 12, 3], backgroundColor: '#FEF08A', hoverBackgroundColor: '#EAB308', borderRadius: 6 }] 
+                },
+                options: { plugins: { legend: { display: false } } }
+            });
+        }
+    </script>
+</body>
+</html>
